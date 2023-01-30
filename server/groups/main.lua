@@ -49,6 +49,8 @@ local function loadGroups()
                 principal = principal,
                 hasAccount = group.hasAccount,
                 adminGrade = group.adminGrade,
+                type = group.type or nil,
+                isUniqueType = group.unique or nil
             })
 
             GlobalState[principal] = GroupRegistry[group.name]

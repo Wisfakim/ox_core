@@ -65,14 +65,24 @@ CREATE TABLE IF NOT EXISTS `character_inventory` (
   CONSTRAINT `FK_inventory_characters` FOREIGN KEY (`charid`) REFERENCES `characters` (`charid`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS `ox_groups_types` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `label` varchar(20) DEFAULT NULL,
+  `unique` bit(1) DEFAULT b'0',
+  PRIMARY KEY (`id`)
+);
+
 CREATE TABLE IF NOT EXISTS `ox_groups` (
   `name` VARCHAR(20) NOT NULL,
   `label` VARCHAR(50) NOT NULL,
   `grades` LONGTEXT NOT NULL,
-  `hasAccount` BIT(1) NOT NULL DEFAULT b'0',
-  `adminGrade` TINYINT UNSIGNED NOT NULL DEFAULT json_length(`grades`),
+  `hasAccount` BIT NOT NULL DEFAULT 0,
+  `adminGrade` TINYINT UNSIGNED NOT NULL DEFAULT JSON_LENGTH(grades),
   `colour` TINYINT UNSIGNED DEFAULT NULL,
-  PRIMARY KEY (`name`) USING BTREE
+  `type` int(11) DEFAULT NULL,
+  PRIMARY KEY (`name`) USING BTREE,
+  KEY `FK_ox_groups_ox_groups_types` (`type`),
+  CONSTRAINT `FK_ox_groups_ox_groups_types` FOREIGN KEY (`type`) REFERENCES `ox_groups_types` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
 INSERT INTO `ox_groups` (
