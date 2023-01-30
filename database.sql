@@ -78,17 +78,28 @@ CREATE TABLE IF NOT EXISTS `ox_groups` (
   `grades` LONGTEXT NOT NULL,
   `hasAccount` BIT NOT NULL DEFAULT 0,
   `adminGrade` TINYINT UNSIGNED NOT NULL DEFAULT JSON_LENGTH(grades),
+  `colour` TINYINT UNSIGNED DEFAULT NULL,
   `type` int(11) DEFAULT NULL,
   PRIMARY KEY (`name`) USING BTREE,
   KEY `FK_ox_groups_ox_groups_types` (`type`),
   CONSTRAINT `FK_ox_groups_ox_groups_types` FOREIGN KEY (`type`) REFERENCES `ox_groups_types` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-INSERT INTO `ox_groups` (`name`, `label`, `grades`)
+INSERT INTO `ox_groups` (
+    `name`,
+    `label`,
+    `grades`,
+    `hasAccount`,
+    `adminGrade`,
+    `colour`
+  )
 VALUES (
     'police',
     'Los Santos Police Department',
-    '["Cadet", "Officer", "Sergeant", "Captain", "Commander", "Chief"]'
+    '["Cadet", "Officer", "Sergeant", "Captain", "Commander", "Chief"]',
+    b'0',
+    6,
+    NULL
   );
 
 CREATE TABLE IF NOT EXISTS `character_groups` (
@@ -103,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `character_groups` (
 CREATE TABLE IF NOT EXISTS `ox_inventory` (
   `owner` VARCHAR(60) DEFAULT NULL,
   `name` VARCHAR(60) NOT NULL,
-  `data` longtext DEFAULT NULL,
+  `data` LONGTEXT DEFAULT NULL,
   `lastupdated` timestamp NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
   UNIQUE KEY `owner` (`owner`, `name`)
 );
@@ -150,12 +161,13 @@ CREATE TABLE IF NOT EXISTS `character_licenses` (
 
 CREATE TABLE IF NOT EXISTS `ox_licenses` (
   `name` VARCHAR(20) NOT NULL,
-  `label` VARCHAR(50) NOT NULL
+  `label` VARCHAR(50) NOT NULL,
+  UNIQUE INDEX `name` (`name`) USING BTREE
 );
 
 INSERT INTO `ox_licenses` (`name`, `label`)
-VALUES ('weapons', 'Weapons License'),
-  ('drivers', 'Drivers License');
+VALUES ('weapon', 'Weapon License'),
+  ('driver', "Driver's License");
 
 CREATE TRIGGER `characters_after_insert`
 AFTER

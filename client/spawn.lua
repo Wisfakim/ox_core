@@ -18,8 +18,7 @@ end)
 
 RegisterNUICallback('loadLocale', function(_, cb)
     cb(1)
-    local resource = GetCurrentResourceName()
-	local JSON = LoadResourceFile(resource, ('locales/%s.json'):format(GetConvar('ox:locale', 'en'))) or LoadResourceFile(resource, 'locales/en.json')
+	local JSON = LoadResourceFile(cache.resource, ('locales/%s.json'):format(GetConvar('ox:locale', 'en'))) or LoadResourceFile(cache.resource, 'locales/en.json')
 
     SendNUIMessage({
         action = 'setLocale',
@@ -157,6 +156,7 @@ local function spawnPlayer(coords)
 	RequestCollisionAtCoord(coords.x, coords.y, coords.z)
 	SetEntityCoordsNoOffset(cache.ped, coords.x, coords.y, coords.z, false, false, false)
     SetEntityHeading(cache.ped, coords.w)
+	FreezeEntityPosition(cache.ped, true)
     SetGameplayCamRelativeHeading(0)
 
     while GetPlayerSwitchState() ~= 5 do Wait(0) end
@@ -164,6 +164,9 @@ local function spawnPlayer(coords)
     SwitchInPlayer(cache.ped)
 
     while GetPlayerSwitchState() ~= 12 do Wait(0) end
+    
+    while not HasCollisionLoadedAroundEntity(cache.ped) do Wait(0) end
+	FreezeEntityPosition(cache.ped, false)
 end
 
 RegisterNUICallback('selectSpawn', function(data, cb)
