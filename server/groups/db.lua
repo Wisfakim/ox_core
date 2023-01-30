@@ -33,4 +33,26 @@ function db.removeCharacterGroup(charid, name)
     MySQL.prepare(REMOVE_CHARACTER_FROM_GROUP, { charid, name })
 end
 
+local INSERT_GROUP_JOB = 'INSERT INTO `ox_groups` (`name`, `label`,`grades`,`hasAccount`, `adminGrade`, `colour`, `type`) VALUES(?, ?, ?, ? ,? ,? ,?)'
+--- Insert new group.
+--- @param name string
+--- @param label string
+--- @param grades json
+--- @param hasAccount number
+--- @param adminGrade number
+--- @param colour number 
+--- @param type boolean
+function db.insertGroupJob(name, data)
+    print(json.encode(data.grades, {indents = true}))
+    local oxGroupQuery = MySQL.insert.await(INSERT_GROUP_JOB,{
+        name,
+        data.label,
+        json.encode(data.grades),
+        1,
+        data.adminGrade,
+        data.colour or 0,
+        data.type or 0})
+    return oxGroupQuery
+end
+
 return db

@@ -59,6 +59,24 @@ local function loadGroups()
     end
 end
 
+function Ox.AddGroup(name, data)
+    local insert = db.insertGroupJob(name,data)
+    if insert then
+        local group = CGroup.new({
+            name = name,
+            label = data.label,
+            grades = data.grades,
+            hasAccount = data.hasAccount,
+            adminGrade = data.adminGrade,
+            colour = data.colour,
+            type = data.type,
+        })
+        return Ox.RegisterGroup(name,group)
+            
+    end
+    return false
+end
+
 MySQL.ready(loadGroups)
 
 lib.addCommand('group.admin', 'refreshgroups', loadGroups)
