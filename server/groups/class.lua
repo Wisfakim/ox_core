@@ -71,7 +71,7 @@ function CGroup:setAccount(player, grade, remove)
     end
 end
 
-local db = require 'groups.db'
+local db = require 'server.groups.db'
 
 ---@param player CPlayer
 ---@param grade? number
@@ -119,5 +119,5 @@ function CGroup:set(player, grade)
     return true
 end
 
-local Class = require 'class'
+local Class = require 'shared.class'
 return Class.new(CGroup)

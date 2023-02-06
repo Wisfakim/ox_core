@@ -1,4 +1,4 @@
-local db = require 'player.db'
+local db = require 'server.player.db'
 
 ---@type table<number, CPlayer>
 local PlayerRegistry = {}
@@ -9,12 +9,7 @@ local playerIdFromUserId = {}
 ---@type table<number, true>
 local connectingPlayers = {}
 
-local CPlayer = require 'player.class'
-
-local private_mt = {
-    __ext = 0,
-    __pack = function() return '' end,
-}
+local CPlayer = require 'server.player.class'
 
 local function addPlayer(playerId, username)
     local identifiers = Ox.GetIdentifiers(playerId)
@@ -50,13 +45,13 @@ local function addPlayer(playerId, username)
         source = playerId,
         userid = userId,
         username = username,
-        private = setmetatable({
+        private = {
             inScope = {},
             groups = {},
             statuses = {},
             licenses = {},
             metadata = identifiers,
-        }, private_mt)
+        }
     })
 
     PlayerRegistry[playerId] = player
