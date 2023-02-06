@@ -72,7 +72,83 @@ function Ox.AddGroup(name, data)
             type = data.type,
         })
         return Ox.RegisterGroup(name,group)
-            
+    end
+    return false
+end
+
+function Ox.RenameGroup(oldName, newName, newLabel)
+    local rename = db.renameGroupJob(oldName,newName, newLabel)
+    if rename then
+        local group = GroupRegistry[oldName]
+        if group then
+            group.name = newName
+            group.label = newLabel
+            GroupRegistry[oldName] = nil
+            GroupRegistry[newName] = group
+            return true
+        end
+    end
+    return false
+end
+
+function Ox.SetGroupColour(name, colour)
+    local set = db.setGroupColour(name,colour)
+    if set then
+        local group = GroupRegistry[name]
+        if group then
+            group.colour = colour
+            return true
+        end
+    end
+    return false
+end
+
+function Ox.AddGroupGrade(group, index, label)
+    local oxgroup = GroupRegistry[group]
+    if oxgroup then
+        local newGrades = {}
+        for i = 1, #oxgroup.grades do
+            if i == index then
+                newGrades[i] = label
+                newGrades[i + 1] = oxgroup.grades[i]
+            elseif i > index then
+                newGrades[i + 1] = oxgroup.grades[i]
+            else
+                newGrades[i] = oxgroup.grades[i]
+            end
+        end
+        local add = db.updateGrades(group, newGrades)
+        if add then
+            GroupRegistry[group].grades = newGrades
+            GroupRegistry[group].adminGrade = #newGrades
+            db.updatePlayersGrades(group, index, false)
+            return true
+        end
+    end
+    return false
+end
+
+function Ox.RemoveGroupGrade(group, index)
+    local oxgroup = GroupRegistry[group]
+    print(group)
+    print(index)
+    if oxgroup then
+        if tonumber(index) >= tonumber(oxgroup.adminGrade) then
+            return false
+        end
+        local newGrades = {}
+        for i = 1, #oxgroup.grades do
+            if i ~= index then
+                newGrades[#newGrades+1] = oxgroup.grades[i]
+            end
+        end
+        local remove = db.updateGrades(group, newGrades)
+        if remove then
+            GroupRegistry[group].grades = newGrades
+            GroupRegistry[group].adminGrade = #newGrades
+            db.updatePlayersGrades(group, index, true)
+            return true
+        end
     end
     return false
 end
