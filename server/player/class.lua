@@ -94,6 +94,23 @@ function CPlayer:getGroups()
     return self.private.groups
 end
 
+---Gets all groups the player is in, filter by type
+---@return table<string, number>
+function CPlayer:getGroupsByType(type)
+    local groups = self.private.groups
+    local result = {}
+
+    for name, grade in pairs(groups) do
+        local group = Ox.GetGroup(name)
+
+        if group.type == type then
+            result[name] = grade
+        end
+    end
+
+    return result
+end
+
 ---Checks if the player has any groups matching the filter, returning the first match.
 ---The filter be the group, an array of groups, or a map where key is the group and value is the minimum grade.
 ---@param filter string | string[] | table<string, number> }
