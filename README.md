@@ -1,7 +1,7 @@
 
 NOT OFFICIAL OX_CORE, MODIFICATIONS TO FIT WITH MY PLAYER MANAGEMENT
 Actual modifications :
-- Type of groupe to make some of them unique
+- Type of groups to make some of them unique
 - Some functions to edit/handle groups for player
 
 
